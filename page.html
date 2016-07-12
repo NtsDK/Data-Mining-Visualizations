@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="0.9.15.min.js" type="text/javascript"></script>
+<script src="convexHull.js" type="text/javascript"></script>
+<script src="Utils.js" type="text/javascript"></script>
+<script src="KMeans.js" type="text/javascript"></script>
+<script src="fuzzyCMeans.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+
+    function init(){
+        var prefs;
+        var dots;
+        var centers;
+        var recalculateData = function(){
+            prefs = new preferences({});
+            dots = Utils.makeDots2(prefs);
+            //dots = Utils.makeDots(prefs);
+            centers = Utils.makeClusterCenters2(dots, prefs);
+        };
+        recalculateData();
+        var vis = [];
+        vis[0] = new fuzzyCMeansVisualisator('c1',dots, centers, prefs,
+                {
+                    countDistance:Utils.manhattanPointDistance,
+                    metrixName:"Euclidus"
+                });
+        vis[1] = new KMeansVisualisator('c2',dots, centers, prefs,
+                {
+                    countDistance:Utils.manhattanPointDistance,
+                    metrixName:"Euclidus"
+                });
+//        vis[2] = new Visualisator('c3',dots, centers, prefs,
+//                {
+//                    countDistance:Utils.manhattanPointDistance,
+//                    metrixName:"Manhattan"
+//                });
+//        vis[3] = new Visualisator('c4',dots, centers, prefs,
+//                {
+//                    countDistance:Utils.chebyshovPointDistance,
+//                    metrixName:"Chebyshov"
+//                });
+//        vis[4] = new Visualisator('c5',dots, centers, prefs,
+//                {
+//                    countDistance:function(point1,point2){
+//                        return Utils.minkovskyPointDistance(point1,point2,1);
+//                    },
+//                    metrixName:"Minkovsky-1"
+//                });
+//        vis[5] = new Visualisator('c6',dots, centers, prefs,
+//                {
+//                    countDistance:function(point1,point2){
+//                        return Utils.minkovskyPointDistance(point1,point2,3);
+//                    },
+//                    metrixName:"Minkovsky-3"
+//                });
+
+
+        var nextIteration = function() {
+            for (var i = 0, len = vis.length; i < len; i++){
+                vis[i].nextIteration();
+                vis[i].render();
+                var metrixNameDiv = Utils.$('metrixName'+(i+1));
+                metrixNameDiv.innerHTML = vis[i].getMetrixName();
+                var isEndedDiv = Utils.$('isEnded'+(i+1));
+                isEndedDiv.innerHTML = "Iterations number: " + vis[i].getIterationsNumber() + ", is ended: "+ vis[i].isEnded() ;
+            }
+        };
+        var nextButton = Utils.$('nextButton');
+        nextButton.onclick = nextIteration;
+
+        var resetButton = Utils.$('resetButton');
+        resetButton.onclick = function() {
+            recalculateData();
+            for (var i = 0, len = vis.length; i < len; i++){
+                vis[i].reset(dots, prefs,centers);
+            }
+        };
+
+        var autoExecute = function(){
+            nextIteration();
+        };
+
+        var timerMulti;
+        var startAutoExecute = function(){
+            if(timerMulti){
+                window.clearInterval(timerMulti);
+            }
+            timerMulti = window.setInterval(autoExecute, 1000);
+        };
+        var stopAutoExecute = function(){
+            if(timerMulti){
+                window.clearInterval(timerMulti);
+            }
+        };
+        Utils.$('startAutoExecuteButton').onclick = startAutoExecute;
+        Utils.$('stopAutoExecuteButton').onclick = stopAutoExecute;
+        distancesTest();
+    }
+
+    function distancesTest(){
+        var point1 = {left:0,top:0};
+        var point2 = {left:4, top:5};
+
+        var texter = Utils.$('texter');
+        texter.innerHTML = texter.innerHTML + " " + Utils.euclidusPointDistance(point1,point2);
+        texter.innerHTML = texter.innerHTML + " " + Utils.euclidusSquarePointDistance(point1,point2);
+        texter.innerHTML = texter.innerHTML + " " + Utils.manhattanPointDistance(point1,point2);
+        texter.innerHTML = texter.innerHTML + " " + Utils.chebyshovPointDistance(point1,point2);
+        texter.innerHTML = texter.innerHTML + " " + Utils.minkovskyPointDistance(point1,point2,1);
+        texter.innerHTML = texter.innerHTML + " " + Utils.minkovskyPointDistance(point1,point2,2);
+        texter.innerHTML = texter.innerHTML + " " + Utils.minkovskyPointDistance(point1,point2,3);
+    }
+
+
+
+
+</script>
+<head>
+    <title></title>
+
+</head>
+<body onload="init()">
+<table>
+    <tr>
+        <td>
+            <div id="metrixName1">
+            </div>
+            <div id="wrapper1">
+                <canvas id="c1" width="600" height="500"></canvas>
+            </div>
+            <div id="isEnded1">
+            </div>
+        </td>
+        <td>
+            <div id="metrixName2">
+            </div>
+            <div id="wrapper2">
+                <canvas id="c2" width="600" height="500"></canvas>
+            </div>
+            <div id="isEnded2">
+            </div>
+        </td>
+        <!--<td>-->
+            <!--<div id="metrixName3">-->
+            <!--</div>-->
+            <!--<div id="wrapper3">-->
+                <!--<canvas id="c3" width="300" height="250"></canvas>-->
+            <!--</div>-->
+            <!--<div id="isEnded3">-->
+
+            <!--</div>-->
+        <!--</td>-->
+        <td>
+            <div class="controls">
+                <button id="startAutoExecuteButton">Start Auto Execute</button>
+                <button id="stopAutoExecuteButton">Stop Auto Execute</button>
+                <button id="resetButton">Reset</button>
+                <button id="nextButton">Next</button>
+
+            </div>
+        </td>
+    </tr>
+    <!--<tr>-->
+        <!--<td>-->
+            <!--<div id="metrixName4">-->
+            <!--</div>-->
+            <!--<div id="wrapper4">-->
+                <!--<canvas id="c4" width="300" height="250"></canvas>-->
+            <!--</div>-->
+            <!--<div id="isEnded4">-->
+            <!--</div>-->
+        <!--</td>-->
+        <!--<td>-->
+            <!--<div id="metrixName5">-->
+            <!--</div>-->
+            <!--<div id="wrapper5">-->
+                <!--<canvas id="c5" width="300" height="250"></canvas>-->
+            <!--</div>-->
+            <!--<div id="isEnded5">-->
+            <!--</div>-->
+        <!--</td>-->
+        <!--<td>-->
+            <!--<div id="metrixName6">-->
+            <!--</div>-->
+            <!--<div id="wrapper6">-->
+                <!--<canvas id="c6" width="300" height="250"></canvas>-->
+            <!--</div>-->
+            <!--<div id="isEnded6">-->
+
+            <!--</div>-->
+        <!--</td>-->
+    <!--</tr>-->
+</table>
+<div id="texter">
+</div>
+</body>
+</html>
