@@ -1,11 +1,12 @@
-function KMeansVisualisator(id, coordDotArray, coordCentersArray, dataPrefs, opts){
+function KMeansVisualisator(header, id, coordDotArray, coordCentersArray, dataPrefs, opts){
     this.canvas = new fabric.Canvas(id, {
         //canvas = new fabric.StaticCanvas('c', {
         hoverCursor: 'pointer',
         selection: true,
         backgroundColor: "#fafafa"
     });
-
+    
+    addEl(header, makeText("K-Means"));
 
     this.canvas.on({
         'object:moving': function(e) {
@@ -16,7 +17,7 @@ function KMeansVisualisator(id, coordDotArray, coordCentersArray, dataPrefs, opt
         }
     });
     this.countDistance = opts && opts.countDistance ? opts.countDistance: Utils.euclidusPointDistance;
-    this.metrixName = opts && opts.metrixName ? opts.metrixName: "Euclidus";
+//    this.metrixName = opts && opts.metrixName ? opts.metrixName: "Euclidus";
 
     this.reset(coordDotArray, dataPrefs, coordCentersArray, opts);
 }
@@ -25,9 +26,9 @@ KMeansVisualisator.prototype.getIterationsNumber = function(){
     return this.iterationsNumber;
 }
 
-KMeansVisualisator.prototype.getMetrixName = function(){
-    return this.metrixName;
-}
+//KMeansVisualisator.prototype.getMetrixName = function(){
+//    return this.metrixName;
+//}
 
 KMeansVisualisator.prototype.isEnded = function(){
     for (var i = 0, len = this.dataPrefs.clusterNumber; i < len; i++) {
@@ -101,12 +102,15 @@ KMeansVisualisator.prototype.updateClusterCenters = function(){
         this.centersArray[i].setLeft(x);
         this.centersArray[i].setTop(y);
         if(this.showTrack){
-            this.canvas.add(new fabric.Line([oldCenter.left, oldCenter.top,
-                this.centersArray[i].left, this.centersArray[i].top], {
-                fill: Utils.rainbow[i],
-                strokeWidth: 4,
-                opacity: 0.7
-            }));
+            var line = new fabric.Line([oldCenter.left, oldCenter.top,
+                                        this.centersArray[i].left, this.centersArray[i].top]);
+            this.canvas.add(line);
+//            this.canvas.add(new fabric.Line([oldCenter.left, oldCenter.top,
+//                                             this.centersArray[i].left, this.centersArray[i].top], {
+//                fill: Utils.rainbow[i],
+//                strokeWidth: 4,
+//                opacity: 0.7
+//            }));
         }
     }
 }

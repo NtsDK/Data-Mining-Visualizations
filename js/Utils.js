@@ -1,15 +1,49 @@
 var getRandomInt = fabric.util.getRandomInt;
+
+var Utils = {};
+
 Utils.rainbow = ["#ffcc66", "#ff6fcf", "#ff6666", "#ccff66", "#66ccff"];
 Utils.rainbowEnd = Utils.rainbow.length - 1;
-Utils.$ = function(id){return document.getElementById(id)};
+//Utils.$ = function(id){return document.getElementById(id)};
+
+function getEl(id){return document.getElementById(id)};
+
+function listen(el, event, listener) {
+    el.addEventListener(event, listener);
+};
+
+function makeText(text) {
+    return document.createTextNode(text);
+};
+
+function addEl(parent, child) {
+    parent.appendChild(child);
+    return parent;
+};
+
+Utils.removeChildren = function (myNode) {
+    "use strict";
+    if (!myNode) {
+        return;
+    }
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+    }
+};
+
+
+function clearEl(el){
+    Utils.removeChildren(el);
+    return el;
+  };
+
 //var FIELD_SIZE_X = 600;
 //var FIELD_SIZE_Y = 500;
 //var CLUSTER_SIZE = 40;
 //var dotNumber = 200;
 //var clusterNumber = 3;
 //var realClusterNumber = 6;
-function Utils(){
-}
+
 
 function preferences(opts){
     this.FIELD_SIZE_X = opts.FIELD_SIZE_X == undefined ? 600 : opts.FIELD_SIZE_X;
@@ -36,14 +70,14 @@ Utils.makeDots2 = function(prefs){
     return dotArray;
 }
 
-Utils.makeDots = function(prefs){
-    //var prefs = opts == undefined ? new preferences({}) : new preferences(opts);
-    var dotArray = [];
-    for (var i = 0, len = prefs.dotNumber; i < len; i++) {
-        dotArray[i] = {x:getRandomInt(0, prefs.FIELD_SIZE_X),y:getRandomInt(0, prefs.FIELD_SIZE_Y)};
-    }
-    return dotArray;
-}
+//Utils.makeDots = function(prefs){
+//    //var prefs = opts == undefined ? new preferences({}) : new preferences(opts);
+//    var dotArray = [];
+//    for (var i = 0, len = prefs.dotNumber; i < len; i++) {
+//        dotArray[i] = {x:getRandomInt(0, prefs.FIELD_SIZE_X),y:getRandomInt(0, prefs.FIELD_SIZE_Y)};
+//    }
+//    return dotArray;
+//}
 
 Utils.makeClusterCenters2 = function(dotArray, prefs){
     var centersArray = [];
@@ -61,13 +95,13 @@ Utils.makeClusterCenters2 = function(dotArray, prefs){
     return centersArray;
 }
 
-Utils.makeClusterCenters = function(prefs){
-    var centersArray = [];
-    for (var i = 0, len = prefs.clusterNumber; i < len; i++) {
-        centersArray[i] = {x:getRandomInt(0, prefs.FIELD_SIZE_X),y:getRandomInt(0, prefs.FIELD_SIZE_Y)};
-    }
-    return centersArray;
-}
+//Utils.makeClusterCenters = function(prefs){
+//    var centersArray = [];
+//    for (var i = 0, len = prefs.clusterNumber; i < len; i++) {
+//        centersArray[i] = {x:getRandomInt(0, prefs.FIELD_SIZE_X),y:getRandomInt(0, prefs.FIELD_SIZE_Y)};
+//    }
+//    return centersArray;
+//}
 
 
 Utils.euclidusDistance = function(arr1, arr2){

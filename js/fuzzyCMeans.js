@@ -1,6 +1,7 @@
-function fuzzyCMeansVisualisator(){
+function fuzzyCMeansVisualisator(header){
     this.p = 2;
     fuzzyCMeansVisualisator.superclass.constructor.apply(this, arguments);
+    addEl(clearEl(header), makeText("Fuzzy c-Means"));
 }
 
 Utils.extend(fuzzyCMeansVisualisator, KMeansVisualisator);
